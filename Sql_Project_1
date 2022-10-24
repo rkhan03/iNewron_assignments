@@ -1,1 +1,88 @@
+use database rk_demo;
+--Tast1
+create or replace table shopping_history
+    (product varchar not null,
+    quantity int not null,
+    unit_price int not null);
+insert into shopping_history values ('milk',10,5),
+('egg',10,20),
+('milk',3,3),
+('bread',10,15),
+('egg',1,5),
+('milk',10,5),
+('milk',10,5),
+('milk',10,5),
+('milk',20,4),
+('milk',1,5),
+('milk',10,8),
+('bread',1,15);
+select * from shopping_history
+select product, sum(unit_price*quantity) as total_price from shopping_history
+group by product
+order by product desc;
 
+
+--Task2;
+--table 1
+create or replace table phones
+(name varchar(20) not null unique,
+ phone_munber int not null unique); 
+ insert into phones values('ram',123),
+ ('rahem',1234),
+ ('david',12345),
+ ('jack',123456),
+ ('vr',1234567),
+ ('cn',12345678);
+ select * from phones;
+ 
+--table 2
+create or replace table calls
+(id int not null,
+ caller int not null,
+ callee int not null,
+ duration int not null,
+ unique(id));
+insert into calls values(1,1234,4321,1),
+(2,123,321,2),
+(3,12345,54321,1),
+(4,123456,654321,8),
+(5,1234567,7654321,1),
+(6,12345678,87654321,8);
+select * from calls;
+
+--Q1
+
+SELECT p.name
+from phones as p
+join calls as c
+on p.phone_munber = c.caller
+group by name
+having sum(duration) >= 5
+order by name;
+--Task 3
+create table transactions(
+    amount int not null,
+    Date date not null);
+INSERT INTO transactions(Amount,Date) VALUES (1000,'2020-01-06');
+INSERT INTO transactions(Amount,Date) VALUES (-10,'2020-01-14');
+INSERT INTO transactions(Amount,Date) VALUES (-75,'2020-01-20');
+INSERT INTO transactions(Amount,Date) VALUES (-5,'2020-01-25');
+INSERT INTO transactions(Amount,Date) VALUES (-4,'2020-01-29');
+INSERT INTO transactions(Amount,Date) VALUES (2000,'2020-03-10');
+INSERT INTO transactions(Amount,Date) VALUES (-75,'2020-03-12');
+INSERT INTO transactions(Amount,Date) VALUES (-20,'2020-03-15');
+INSERT INTO transactions(Amount,Date) VALUES (40,'2020-03-15');
+INSERT INTO transactions(Amount,Date) VALUES (-50,'2020-03-17');
+INSERT INTO transactions(Amount,Date) VALUES (200,'2020-10-10');
+INSERT INTO transactions(Amount,Date) VALUES (-200,'2020-10-10');
+
+select * from transactions;
+
+Select ( sum(a.total) - (12- count(b.cnt ))*5 ) as result From  
+(Select sum(amount) as total , 'A' as name from  transactions  ) as a  left join  
+(Select  count(amount) as cnt  , 'A' as name
+From transactions 
+where amount <0 
+group by month(date) 
+having not(count(amount) <3 or  sum(amount) >-100) ) as b 
+on a.name = b.name 
